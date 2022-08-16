@@ -3,6 +3,8 @@ package rtech
 import (
 	"runtime"
 	"time"
+
+	"github.com/go-gl/gl/v3.3-core/gl"
 )
 
 type REngine struct {
@@ -46,9 +48,14 @@ func (e *REngine) Run() error {
 	}
 	return nil
 }
-
+func (e *REngine) clear() {
+	gl.Scissor(0, 0, 1280, 720)
+	gl.ClearColor(0.2, 0.2, 0.2, 1.0)
+	gl.Clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT | gl.STENCIL_BUFFER_BIT)
+}
 func (e *REngine) render(time time.Duration) {
 	// main render pass.
+	e.clear()
 	e.renderfn(time)
 	e.window.Present()
 }
