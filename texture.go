@@ -26,12 +26,16 @@ type RTexture2D struct {
 	textureID uint32
 }
 
-func newTexture(file string) (*RTexture2D, error) {
+func NewTextureFromPath(file string) (*RTexture2D, error) {
 	imgFile, err := os.Open(file)
 	if err != nil {
 		return nil, fmt.Errorf("texture %q not found on disk: %v", file, err)
 	}
-	img, _, err := image.Decode(imgFile)
+	defer imgFile.Close()
+	return NewTextureFromFile(imgFile)
+}
+func NewTextureFromFile(file *os.File) (*RTexture2D, error) {
+	img, _, err := image.Decode(file)
 	if err != nil {
 		return nil, err
 	}

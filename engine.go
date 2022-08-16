@@ -6,12 +6,14 @@ import (
 	"time"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
+	fs "github.com/rtech/fs"
 )
 
 // REngine is the main object that handles the core services of the game engine.
 // Window init, calling update and render, shutting down.
 // Call [EngineInit] to get an REngine instance to begin the game engine.
 type REngine struct {
+	fs         fs.FileSystem
 	window     Window
 	running    bool
 	game       RGame
@@ -26,6 +28,7 @@ func EngineInit(game RGame) *REngine {
 	if __engine == nil {
 		runtime.LockOSThread()
 		__engine = &REngine{
+			fs:         fs.NewFilesystem(),
 			window:     NewWindow(),
 			running:    false,
 			game:       game,
