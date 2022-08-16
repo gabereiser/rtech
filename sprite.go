@@ -6,4 +6,5 @@ import (
 
 type RSprite struct {
 	position mgl.Vec2
+	texture  *RTexture2D
 }

@@ -8,16 +8,23 @@ import (
 
 var engine *rtech.REngine
 
+type Game struct{}
+
 func main() {
-	engine = rtech.EngineInit(update, render)
+	game := &Game{}
+	engine = rtech.EngineInit(game)
 	engine.Run()
 	engine.Destroy()
 }
 
-func update(time time.Duration) {
+func (g *Game) Init() {
 
 }
 
-func render(time time.Duration) {
+func (g *Game) Update(time time.Duration) {
+
+}
+
+func (g *Game) Render(time time.Duration) {
 
 }
