@@ -1,0 +1,16 @@
+.DS_Store
+.vscode
+.idea
+
+packages/
+releases/
+bin/
+
+*.exe
+*.exe~
+*.a
+*.o
+*.so
+*.lib
+*.dylib
+*.dll
