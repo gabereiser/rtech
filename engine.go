@@ -5,8 +5,9 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/go-gl/gl/v4.1-core/gl"
-	fs "github.com/rtech/fs"
+	fs "github.com/gabereiser/rtech/fs"
+	"github.com/gabereiser/rtech/gl"
+	"github.com/gabereiser/rtech/types"
 )
 
 // REngine is the main object that handles the core services of the game engine.
@@ -14,10 +15,11 @@ import (
 // Call [EngineInit] to get an REngine instance to begin the game engine.
 type REngine struct {
 	fs         fs.FileSystem
-	window     Window
+	window     gl.Window
 	running    bool
 	game       RGame
-	clearColor RColor
+	clearColor types.RColor
+	viewport   types.RViewport
 }
 
 var __engine *REngine
@@ -27,12 +29,14 @@ var __engine *REngine
 func EngineInit(game RGame) *REngine {
 	if __engine == nil {
 		runtime.LockOSThread()
+		window := gl.NewWindow()
 		__engine = &REngine{
 			fs:         fs.NewFilesystem(),
-			window:     NewWindow(),
+			window:     window,
 			running:    false,
 			game:       game,
-			clearColor: RColor{255, 255, 255, 255},
+			clearColor: types.RColor{255, 255, 255, 255},
+			viewport:   types.RViewport{0, 0, int(window.Size().X()), int(window.Size().Y())},
 		}
 	}
 	return __engine
@@ -70,26 +74,14 @@ func (e *REngine) updateFps(gameTime time.Duration) {
 	}
 }
 
-func (e *REngine) ClearAll() {
-	gl.Viewport(0, 0, int32(e.window.Size().X()), int32(e.window.Size().Y()))
-	gl.Scissor(0, 0, int32(e.window.Size().X()), int32(e.window.Size().Y()))
-	gl.ClearColor(e.clearColor.RedF(), e.clearColor.GreenF(), e.clearColor.BlueF(), e.clearColor.AlphaF())
-	gl.Clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT | gl.STENCIL_BUFFER_BIT)
-}
 func (e *REngine) Clear() {
-	gl.ClearColor(e.clearColor.RedF(), e.clearColor.GreenF(), e.clearColor.BlueF(), e.clearColor.AlphaF())
-	gl.Clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT | gl.STENCIL_BUFFER_BIT)
-}
-func (e *REngine) ClearDepth() {
-	gl.Clear(gl.DEPTH_BUFFER_BIT)
-}
-func (e *REngine) ClearStencil() {
-	gl.Clear(gl.STENCIL_BUFFER_BIT)
+	gl.ClearAll(e.clearColor)
 }
 
 func (e *REngine) render(time time.Duration) {
 	// main render pass.
-	e.ClearAll()
+	e.viewport.Bind()
+	e.Clear()
 	e.game.Render(time)
 	e.window.Present()
 }

@@ -1,4 +1,4 @@
-package rtech
+package types
 
 type RColor struct {
 	Red   uint8
@@ -18,6 +18,9 @@ func (c *RColor) BlueF() float32 {
 }
 func (c *RColor) AlphaF() float32 {
 	return float32(c.Red) / 255.0
+}
+func (c *RColor) ToArrayF32() []float32 {
+	return []float32{c.RedF(), c.GreenF(), c.BlueF(), c.AlphaF()}
 }
 func NewColorFromInt32(color int32) RColor {
 	alpha := color & 0xFF

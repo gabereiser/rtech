@@ -1,4 +1,4 @@
-package rtech
+package gl
 
 import (
 	"fmt"
@@ -21,12 +21,12 @@ const (
 	RTEXTURE_WRAP_REPEAT               = int32(gl.REPEAT)
 )
 
-type RTexture2D struct {
+type Texture2D struct {
 	image     *image.RGBA
 	textureID uint32
 }
 
-func NewTextureFromPath(file string) (*RTexture2D, error) {
+func NewTextureFromPath(file string) (*Texture2D, error) {
 	imgFile, err := os.Open(file)
 	if err != nil {
 		return nil, fmt.Errorf("texture %q not found on disk: %v", file, err)
@@ -34,7 +34,7 @@ func NewTextureFromPath(file string) (*RTexture2D, error) {
 	defer imgFile.Close()
 	return NewTextureFromFile(imgFile)
 }
-func NewTextureFromFile(file *os.File) (*RTexture2D, error) {
+func NewTextureFromFile(file *os.File) (*Texture2D, error) {
 	img, _, err := image.Decode(file)
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func NewTextureFromFile(file *os.File) (*RTexture2D, error) {
 		return nil, fmt.Errorf("unsupported stride")
 	}
 	draw.Draw(rgba, rgba.Bounds(), img, image.Point{0, 0}, draw.Src)
-	rt := &RTexture2D{
+	rt := &Texture2D{
 		image:     rgba,
 		textureID: 0,
 	}
@@ -76,32 +76,32 @@ func NewTextureFromFile(file *os.File) (*RTexture2D, error) {
 	return rt, nil
 }
 
-func (tex *RTexture2D) Bind() {
+func (tex *Texture2D) Bind() {
 	gl.BindTexture(gl.TEXTURE_2D, tex.textureID)
 }
-func (tex *RTexture2D) Unbind() {
+func (tex *Texture2D) Unbind() {
 	gl.BindTexture(gl.TEXTURE_2D, 0)
 }
 
-func (tex *RTexture2D) SetTextureMinFilter(filter int32) {
+func (tex *Texture2D) SetTextureMinFilter(filter int32) {
 	gl.ActiveTexture(gl.TEXTURE0)
 	tex.Bind()
 	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter)
 	tex.Unbind()
 }
-func (tex *RTexture2D) SetTextureMagFilter(filter int32) {
+func (tex *Texture2D) SetTextureMagFilter(filter int32) {
 	gl.ActiveTexture(gl.TEXTURE0)
 	tex.Bind()
 	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter)
 	tex.Unbind()
 }
-func (tex *RTexture2D) SetTextureWrapS(wrap int32) {
+func (tex *Texture2D) SetTextureWrapS(wrap int32) {
 	gl.ActiveTexture(gl.TEXTURE0)
 	tex.Bind()
 	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrap)
 	tex.Unbind()
 }
-func (tex *RTexture2D) SetTextureWrapT(wrap int32) {
+func (tex *Texture2D) SetTextureWrapT(wrap int32) {
 	gl.ActiveTexture(gl.TEXTURE0)
 	tex.Bind()
 	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrap)
