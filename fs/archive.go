@@ -5,6 +5,7 @@ import (
 	"compress/gzip"
 	"io"
 	"os"
+	"strings"
 )
 
 type RArchive struct {
@@ -14,6 +15,9 @@ type RArchive struct {
 }
 
 func (a *RArchive) GetFile(path string) ([]byte, error) {
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
 	buf := make([]byte, 0)
 	for {
 		header, e := a.ar.Next()
