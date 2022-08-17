@@ -59,7 +59,7 @@ func (s *RScene) GetRootNode() SceneNode {
 func (s *RScene) SetRootNode(node *RSceneNode) {
 	s.root = node
 }
-func (s *RScene) CreateNode() SceneNode {
+func (s *RScene) CreateNode() *RSceneNode {
 	return &RSceneNode{
 		position: mgl.Vec3{0, 0, 0},
 		rotation: mgl.Quat{V: mgl.Vec3{0, 0, 0}, W: 1},

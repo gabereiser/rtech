@@ -1,4 +1,4 @@
-package types
+package rtech
 
 type RColor struct {
 	Red   uint8

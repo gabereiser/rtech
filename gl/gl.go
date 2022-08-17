@@ -1,7 +1,6 @@
 package gl
 
 import (
-	"github.com/gabereiser/rtech/types"
 	"github.com/go-gl/gl/v4.1-core/gl"
 )
 
@@ -60,12 +59,12 @@ const (
 	STENCIL_BUFFER_BIT = gl.STENCIL_BUFFER_BIT
 )
 
-func Clear(color types.RColor, bit int) {
-	gl.ClearColor(color.RedF(), color.GreenF(), color.BlueF(), color.AlphaF())
+func Clear(r, g, b, a float32, bit int) {
+	gl.ClearColor(r, g, b, a)
 	gl.Clear(uint32(bit))
 }
-func ClearAll(clearColor types.RColor) {
-	Clear(clearColor, DEPTH_BUFFER_BIT|COLOR_BUFFER_BIT|STENCIL_BUFFER_BIT)
+func ClearAll(r, g, b, a float32) {
+	Clear(r, g, b, a, DEPTH_BUFFER_BIT|COLOR_BUFFER_BIT|STENCIL_BUFFER_BIT)
 }
 
 /********* END CLEAR *********/
