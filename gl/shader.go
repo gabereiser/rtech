@@ -7,11 +7,11 @@ import (
 	"github.com/go-gl/gl/v4.1-core/gl"
 )
 
-type RShader struct {
+type Shader struct {
 	program uint32
 }
 
-func NewShader(vertexShaderSource, fragmentShaderSource string) (*RShader, error) {
+func NewShader(vertexShaderSource, fragmentShaderSource string) (*Shader, error) {
 	vertexShader, err := compileShader(vertexShaderSource, gl.VERTEX_SHADER)
 	if err != nil {
 		return nil, err
@@ -42,13 +42,13 @@ func NewShader(vertexShaderSource, fragmentShaderSource string) (*RShader, error
 
 	gl.DeleteShader(vertexShader)
 	gl.DeleteShader(fragmentShader)
-	rt := &RShader{
+	rt := &Shader{
 		program: program,
 	}
 	return rt, nil
 }
 
-func (s *RShader) Destroy() {
+func (s *Shader) Destroy() {
 	gl.DeleteProgram(s.program)
 }
 

@@ -1,4 +1,4 @@
-package gl
+package rtech
 
 import (
 	"fmt"
@@ -9,24 +9,28 @@ import (
 	"github.com/go-gl/gl/v4.1-core/gl"
 )
 
-const (
-	RTEXTURE_FILTER_LINEAR  = int32(gl.LINEAR)
-	RTEXTURE_FILTER_NEAREST = int32(gl.NEAREST)
+type RTEXTURE_FILTER int
+type RTEXTURE_WRAP int
 
-	RTEXTURE_WRAP_CLAMP_TO_EDGE        = int32(gl.CLAMP_TO_EDGE)
-	RTEXTURE_WRAP_CLAMP_TO_BORDER      = int32(gl.CLAMP_TO_BORDER)
-	RTEXTURE_WRAP_CLAMP_READ_COLOR     = int32(gl.CLAMP_READ_COLOR)
-	RTEXTURE_WRAP_MIRRORED_REPEAT      = int32(gl.MIRRORED_REPEAT)
-	RTEXTURE_WRAP_MIRROR_CLAMP_TO_EDGE = int32(gl.MIRROR_CLAMP_TO_EDGE)
-	RTEXTURE_WRAP_REPEAT               = int32(gl.REPEAT)
+const (
+	RTEXTURE_FILTER_BILINEAR  RTEXTURE_FILTER = gl.LINEAR
+	RTEXTURE_FILTER_TRILINEAR RTEXTURE_FILTER = gl.LINEAR_MIPMAP_LINEAR
+	RTEXTURE_FILTER_NONE      RTEXTURE_FILTER = gl.NEAREST
+
+	RTEXTURE_WRAP_CLAMP_TO_EDGE        RTEXTURE_WRAP = gl.CLAMP_TO_EDGE
+	RTEXTURE_WRAP_CLAMP_TO_BORDER      RTEXTURE_WRAP = gl.CLAMP_TO_BORDER
+	RTEXTURE_WRAP_CLAMP_READ_COLOR     RTEXTURE_WRAP = gl.CLAMP_READ_COLOR
+	RTEXTURE_WRAP_MIRRORED_REPEAT      RTEXTURE_WRAP = gl.MIRRORED_REPEAT
+	RTEXTURE_WRAP_MIRROR_CLAMP_TO_EDGE RTEXTURE_WRAP = gl.MIRROR_CLAMP_TO_EDGE
+	RTEXTURE_WRAP_REPEAT               RTEXTURE_WRAP = gl.REPEAT
 )
 
-type Texture2D struct {
+type RTexture2D struct {
 	image     *image.RGBA
 	textureID uint32
 }
 
-func NewTextureFromPath(file string) (*Texture2D, error) {
+func NewTextureFromPath(file string) (*RTexture2D, error) {
 	imgFile, err := os.Open(file)
 	if err != nil {
 		return nil, fmt.Errorf("texture %q not found on disk: %v", file, err)
@@ -34,7 +38,7 @@ func NewTextureFromPath(file string) (*Texture2D, error) {
 	defer imgFile.Close()
 	return NewTextureFromFile(imgFile)
 }
-func NewTextureFromFile(file *os.File) (*Texture2D, error) {
+func NewTextureFromFile(file *os.File) (*RTexture2D, error) {
 	img, _, err := image.Decode(file)
 	if err != nil {
 		return nil, err
@@ -45,7 +49,7 @@ func NewTextureFromFile(file *os.File) (*Texture2D, error) {
 		return nil, fmt.Errorf("unsupported stride")
 	}
 	draw.Draw(rgba, rgba.Bounds(), img, image.Point{0, 0}, draw.Src)
-	rt := &Texture2D{
+	rt := &RTexture2D{
 		image:     rgba,
 		textureID: 0,
 	}
@@ -76,34 +80,34 @@ func NewTextureFromFile(file *os.File) (*Texture2D, error) {
 	return rt, nil
 }
 
-func (tex *Texture2D) Bind() {
+func (tex *RTexture2D) Bind() {
 	gl.BindTexture(gl.TEXTURE_2D, tex.textureID)
 }
-func (tex *Texture2D) Unbind() {
+func (tex *RTexture2D) Unbind() {
 	gl.BindTexture(gl.TEXTURE_2D, 0)
 }
 
-func (tex *Texture2D) SetTextureMinFilter(filter int32) {
+func (tex *RTexture2D) SetTextureMinFilter(filter RTEXTURE_FILTER) {
 	gl.ActiveTexture(gl.TEXTURE0)
 	tex.Bind()
-	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter)
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, int32(filter))
 	tex.Unbind()
 }
-func (tex *Texture2D) SetTextureMagFilter(filter int32) {
+func (tex *RTexture2D) SetTextureMagFilter(filter RTEXTURE_FILTER) {
 	gl.ActiveTexture(gl.TEXTURE0)
 	tex.Bind()
-	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter)
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, int32(filter))
 	tex.Unbind()
 }
-func (tex *Texture2D) SetTextureWrapS(wrap int32) {
+func (tex *RTexture2D) SetTextureWrapS(wrap RTEXTURE_WRAP) {
 	gl.ActiveTexture(gl.TEXTURE0)
 	tex.Bind()
-	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrap)
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, int32(wrap))
 	tex.Unbind()
 }
-func (tex *Texture2D) SetTextureWrapT(wrap int32) {
+func (tex *RTexture2D) SetTextureWrapT(wrap RTEXTURE_WRAP) {
 	gl.ActiveTexture(gl.TEXTURE0)
 	tex.Bind()
-	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrap)
+	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, int32(wrap))
 	tex.Unbind()
 }
