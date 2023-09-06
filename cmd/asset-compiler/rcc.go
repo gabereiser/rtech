@@ -10,6 +10,9 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/qmuntal/gltf"
+	"github.com/qmuntal/gltf/modeler"
 )
 
 func main() {
@@ -28,12 +31,15 @@ func main() {
 
 func compile(args ...string) {
 	files := make([]string, 0)
+	compiledFiles := make([]string, 0)
 	filepath.Walk(args[1], func(path string, info fs.FileInfo, err error) error {
 		if !info.IsDir() {
 			ext := filepath.Ext(path)
 			switch ext {
-			case ".png", ".jpg", ".bmp", ".obj", ".fbx", ".mp3", ".aac", ".wav", ".glsl":
+			case ".png", ".jpg", ".bmp", ".mp3", ".aac", ".wav", ".glsl":
 				files = append(files, path)
+			case ".gltf", ".glb":
+				compiledFiles = append(compiledFiles, compileAsset(path))
 			}
 		}
 		return nil
@@ -93,4 +99,23 @@ func archiveAdd(tw *tar.Writer, prefix, file string) error {
 	}
 
 	return nil
+}
+
+func compileAsset(path string) string {
+	doc, e := gltf.Open(path)
+	if e != nil {
+		panic(fmt.Errorf("error compiling asset: %v", e))
+	}
+	for _, m := range doc.Meshes {
+		for _, p := range m.Primitives {
+			pIdx := *p.Indices
+			indexAccessor := doc.Accessors[int(pIdx)]
+			meshIndices, err := modeler.ReadIndices(doc, indexAccessor, nil)
+			positionAttr := p.Attributes[gltf.POSITION]
+			normalAttr := p.Attributes[gltf.NORMAL]
+			binormalAttr := p.Attributes[gltf.TANGENT]
+			texcoordAttr := p.Attributes[gltf.TEXCOORD_0]
+			position, err := modeler.ReadPosition(doc, doc.Accessors[positionAttr], doc.Accessors[positionAttr].Sparse.Values.BufferView)
+		}
+	}
 }

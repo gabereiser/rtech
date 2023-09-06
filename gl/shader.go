@@ -23,11 +23,10 @@ func NewShader(vertexShaderSource, fragmentShaderSource string) (*Shader, error)
 	}
 
 	program := gl.CreateProgram()
-
+	Error()
 	gl.AttachShader(program, vertexShader)
 	gl.AttachShader(program, fragmentShader)
 	gl.LinkProgram(program)
-
 	var status int32
 	gl.GetProgramiv(program, gl.LINK_STATUS, &status)
 	if status == gl.FALSE {
@@ -39,9 +38,10 @@ func NewShader(vertexShaderSource, fragmentShaderSource string) (*Shader, error)
 
 		return nil, fmt.Errorf("failed to link program: %v", log)
 	}
-
+	Error()
 	gl.DeleteShader(vertexShader)
 	gl.DeleteShader(fragmentShader)
+	Error()
 	rt := &Shader{
 		program: program,
 	}
@@ -50,6 +50,7 @@ func NewShader(vertexShaderSource, fragmentShaderSource string) (*Shader, error)
 
 func (s *Shader) Destroy() {
 	gl.DeleteProgram(s.program)
+	Error()
 }
 
 func compileShader(source string, shaderType uint32) (uint32, error) {
@@ -59,7 +60,9 @@ func compileShader(source string, shaderType uint32) (uint32, error) {
 	gl.ShaderSource(shader, 1, csources, nil)
 	free()
 	gl.CompileShader(shader)
-
+	if e := Error(); e != nil {
+		return 0, e
+	}
 	var status int32
 	gl.GetShaderiv(shader, gl.COMPILE_STATUS, &status)
 	if status == gl.FALSE {

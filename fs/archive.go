@@ -8,13 +8,13 @@ import (
 	"strings"
 )
 
-type RArchive struct {
+type rArchive struct {
 	fp *os.File
 	ar *tar.Reader
 	gz *gzip.Reader
 }
 
-func (a *RArchive) GetFile(path string) ([]byte, error) {
+func (a *rArchive) GetFile(path string) ([]byte, error) {
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path
 	}
@@ -42,7 +42,7 @@ func (a *RArchive) GetFile(path string) ([]byte, error) {
 	}
 	return buf, nil
 }
-func (a *RArchive) Close() {
+func (a *rArchive) Close() {
 	a.gz.Close()
 	a.fp.Sync()
 	a.fp.Close()
@@ -58,7 +58,7 @@ func OpenArchive(path string) (Archive, error) {
 		return nil, e
 	}
 	tr := tar.NewReader(gr)
-	a := &RArchive{
+	a := &rArchive{
 		fp: fp,
 		gz: gr,
 		ar: tr,

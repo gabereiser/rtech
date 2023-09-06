@@ -19,16 +19,16 @@ type FileSystem interface {
 	Close()
 }
 
-type RFileSystem struct {
+type rFilesystem struct {
 	archives map[string]Archive
 }
 
 func NewFilesystem() FileSystem {
-	return &RFileSystem{
+	return &rFilesystem{
 		archives: make(map[string]Archive),
 	}
 }
-func (fs *RFileSystem) OpenFile(path string) (io.Reader, error) {
+func (fs *rFilesystem) OpenFile(path string) (io.Reader, error) {
 	buf, e := embeded.ReadFile(path)
 	if e == nil && len(buf) > 0 {
 		return bytes.NewReader(buf), e
@@ -48,11 +48,11 @@ func (fs *RFileSystem) OpenFile(path string) (io.Reader, error) {
 	return bufio.NewReader(fp), nil
 }
 
-func (fs *RFileSystem) WriteFile(path string, b []byte) error {
+func (fs *rFilesystem) WriteFile(path string, b []byte) error {
 	return os.WriteFile(path, b, 0755)
 }
 
-func (fs *RFileSystem) AddArchive(path string) error {
+func (fs *rFilesystem) AddArchive(path string) error {
 	if _, ok := fs.archives[path]; ok {
 		return fmt.Errorf("archive already loaded")
 	}
@@ -64,7 +64,7 @@ func (fs *RFileSystem) AddArchive(path string) error {
 	return nil
 }
 
-func (fs *RFileSystem) Close() {
+func (fs *rFilesystem) Close() {
 	for _, a := range fs.archives {
 		a.Close()
 	}
