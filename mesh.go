@@ -1,10 +1,12 @@
 package rtech
 
-import mgl "github.com/go-gl/mathgl/mgl64"
+import (
+	m "github.com/gabereiser/rtech/math"
+)
 
 type RVertexData struct {
-	Position mgl.Vec3
-	Normal   mgl.Vec3
-	Binormal mgl.Vec3
-	TexCoord mgl.Vec2
+	Position m.Vector3
+	Normal   m.Vector3
+	Binormal m.Vector3
+	TexCoord m.Vector2
 }

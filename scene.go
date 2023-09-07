@@ -4,17 +4,17 @@ import (
 	"time"
 
 	arraylist "github.com/emirpasic/gods/lists/arraylist"
-	mgl "github.com/go-gl/mathgl/mgl64"
+	m "github.com/gabereiser/rtech/math"
 )
 
 type Translatable interface {
-	GetPosition() mgl.Vec3
+	GetPosition() m.Vector3
 }
 type Rotatable interface {
-	GetRotation() mgl.Quat
+	GetRotation() m.Quaternion
 }
 type Scalable interface {
-	GetScale() mgl.Vec3
+	GetScale() m.Vector3
 }
 type Updatable interface {
 	Update(gameTime time.Duration)
@@ -61,9 +61,9 @@ func (s *RScene) SetRootNode(node *RSceneNode) {
 }
 func (s *RScene) CreateNode() *RSceneNode {
 	return &RSceneNode{
-		position: mgl.Vec3{0, 0, 0},
-		rotation: mgl.Quat{V: mgl.Vec3{0, 0, 0}, W: 1},
-		scale:    mgl.Vec3{1, 1, 1},
+		position: m.Vector3{0, 0, 0},
+		rotation: m.Quaternion{V: m.Vector3{0, 0, 0}, W: 1},
+		scale:    m.Vector3{1, 1, 1},
 		parent:   nil,
 		children: arraylist.New(),
 	}
@@ -81,20 +81,20 @@ func (s *RScene) DestroyAll() {
 }
 
 type RSceneNode struct {
-	position mgl.Vec3
-	rotation mgl.Quat
-	scale    mgl.Vec3
+	position m.Vector3
+	rotation m.Quaternion
+	scale    m.Vector3
 	parent   SceneNode3D
 	children *arraylist.List
 }
 
-func (n *RSceneNode) GetPosition() mgl.Vec3 {
+func (n *RSceneNode) GetPosition() m.Vector3 {
 	return n.position
 }
-func (n *RSceneNode) GetRotation() mgl.Quat {
+func (n *RSceneNode) GetRotation() m.Quaternion {
 	return n.rotation
 }
-func (n *RSceneNode) GetScale() mgl.Vec3 {
+func (n *RSceneNode) GetScale() m.Vector3 {
 	return n.scale
 }
 func (n *RSceneNode) GetParent() SceneNode3D {

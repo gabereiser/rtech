@@ -27,7 +27,7 @@ const (
 
 type RTexture2D struct {
 	image     *image.RGBA
-	textureID uint32
+	textureID RID
 }
 
 func NewTextureFromPath(file string) (*RTexture2D, error) {

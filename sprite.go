@@ -1,10 +1,8 @@
 package rtech
 
-import (
-	mgl "github.com/go-gl/mathgl/mgl64"
-)
+import m "github.com/gabereiser/rtech/math"
 
 type RSprite struct {
-	position mgl.Vec2
+	position m.Vector2
 	texture  *RTexture2D
 }

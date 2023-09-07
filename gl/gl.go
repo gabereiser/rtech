@@ -78,7 +78,9 @@ func ClearAll(r, g, b, a float32) {
 	Clear(r, g, b, a, DEPTH_BUFFER_BIT|COLOR_BUFFER_BIT|STENCIL_BUFFER_BIT)
 }
 
-type DRAW_MODE uint32
+type DRAW_MODE = uint32
+type BLEND_MODE = uint32
+type BLEND_FUNC = uint32
 
 const (
 	DRAW_MODE_POINTS         DRAW_MODE = gl.POINTS
@@ -89,6 +91,47 @@ const (
 	DRAW_MODE_TRIANGLE_STRIP DRAW_MODE = gl.TRIANGLE_STRIP
 	DRAW_MODE_TRIANGLE_FAN   DRAW_MODE = gl.TRIANGLE_FAN
 )
+const (
+	BLEND_ZERO              BLEND_MODE = gl.ZERO
+	BLEND_ONE               BLEND_MODE = gl.ONE
+	BLEND_SRC_COLOR         BLEND_MODE = gl.SRC_COLOR
+	BLEND_INVERSE_SRC_COLOR BLEND_MODE = gl.ONE_MINUS_SRC_COLOR
+	BLEND_SRC_ALPHA         BLEND_MODE = gl.SRC_ALPHA
+	BLEND_INVERSE_SRC_ALPHA BLEND_MODE = gl.ONE_MINUS_SRC_ALPHA
+	BLEND_DST_COLOR         BLEND_MODE = gl.DST_COLOR
+	BLEND_INVERSE_DST_COLOR BLEND_MODE = gl.ONE_MINUS_DST_COLOR
+	BLEND_DST_ALPHA         BLEND_MODE = gl.DST_ALPHA
+	BLEND_INVERSE_DST_ALPHA BLEND_MODE = gl.ONE_MINUS_DST_ALPHA
+)
+const (
+	BLEND_FUNC_ADD     BLEND_FUNC = gl.FUNC_ADD
+	BLEND_FUNC_SUB     BLEND_FUNC = gl.FUNC_SUBTRACT
+	BLEND_FUNC_REV_SUB BLEND_FUNC = gl.FUNC_REVERSE_SUBTRACT
+	BLEND_FUNC_MIN     BLEND_FUNC = gl.MIN
+	BLEND_FUNC_MAX     BLEND_FUNC = gl.MAX
+)
+
+func Blend(src BLEND_MODE, dst BLEND_MODE) {
+	gl.BlendFunc(src, dst)
+}
+func BlendColor(color [4]float32) {
+	gl.BlendColor(color[0], color[1], color[2], color[3])
+}
+func BlendFunc(blend BLEND_FUNC) {
+	gl.BlendEquation(blend)
+}
+func BlendAdd() {
+	gl.BlendFunc(BLEND_SRC_ALPHA, BLEND_ONE)
+}
+func BlendAlpha() {
+	gl.BlendFunc(BLEND_ONE, BLEND_INVERSE_SRC_ALPHA)
+}
+func BlendNonPreMultiplied() {
+	gl.BlendFunc(BLEND_SRC_ALPHA, BLEND_INVERSE_SRC_ALPHA)
+}
+func BlendNone() {
+	gl.BlendFunc(BLEND_ONE, BLEND_ZERO)
+}
 
 func BindVertexData() {
 
